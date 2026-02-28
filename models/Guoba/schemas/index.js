@@ -1,6 +1,7 @@
 import { Config } from '#components'
 
 import access from './access.js'
+import filter from './filter.js'
 import meme from './meme.js'
 import other from './other.js'
 import protect from './protect.js'
@@ -12,6 +13,7 @@ export const schemas = [
   meme,
   access,
   protect,
+  filter,
   stat,
   other
 ].flat()
@@ -22,6 +24,7 @@ export function getConfigData () {
     meme: Config.meme,
     access: Config.access,
     protect: Config.protect,
+    filter: Config.filter,
     stat: Config.stat,
     other: Config.other
   }

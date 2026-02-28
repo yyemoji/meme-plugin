@@ -1,0 +1,14 @@
+# 全局表情包过滤开关
+enable: false
+
+# 过滤关键词列表
+keywords: []
+
+# 过滤回复内容
+replyContent: 哼
+
+# 白名单群聊列表
+whiteGroupList: []
+
+# 白名单用户列表
+whiteUserList: []

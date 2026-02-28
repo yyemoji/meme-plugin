@@ -174,6 +174,41 @@ const cfgSchema = {
       }
     }
   },
+  filter: {
+    title: '表情过滤设置',
+    cfg: {
+      enable: {
+        title: '全局表情过滤',
+        desc: '是否开启全局表情包过滤',
+        type: 'boolean',
+        def: false
+      },
+      keywords: {
+        title: '过滤关键词',
+        desc: '触发过滤的关键词列表，匹配到这些关键词时将触发过滤',
+        type: 'list',
+        def: []
+      },
+      replyContent: {
+        title: '过滤回复内容',
+        desc: '触发过滤时的回复内容',
+        type: 'string',
+        def: '哼'
+      },
+      whiteGroupList: {
+        title: '白名单群聊',
+        desc: '不受过滤限制的群聊列表',
+        type: 'list',
+        def: []
+      },
+      whiteUserList: {
+        title: '白名单用户',
+        desc: '不受过滤限制的用户列表',
+        type: 'list',
+        def: []
+      }
+    }
+  },
   other: {
     title: '其他设置',
     cfg: {
