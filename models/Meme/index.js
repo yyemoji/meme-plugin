@@ -37,6 +37,7 @@ async function make (
   const formData = new FormData()
   let quotedUser
   let source = null
+  let hasQuotedImages = false
   if (e.reply_id) {
     source = await e.getReply()
   } else if (e.source) {
@@ -49,6 +50,11 @@ async function make (
   if (source) {
     const sourceArray = Array.isArray(source) ? source : [ source ]
     quotedUser = sourceArray[0].sender.user_id.toString()
+    // 检查引用消息中是否存在图片
+    hasQuotedImages = sourceArray.some(item => 
+      item.message && Array.isArray(item.message) && 
+      item.message.some(msg => msg.type === 'image')
+    )
   }
   const allUsers = [
     ...new Set([
@@ -57,7 +63,7 @@ async function make (
         .map(at => at?.qq?.toString() ?? ''),
       ...[ ...userText.matchAll(/@\s*(\d+)/g) ].map(match => match[1] ?? '')
     ])
-  ].filter(id => id)
+  ].filter(id => id && (!hasQuotedImages || id !== quotedUser))
 
   if (userText) {
     userText = userText.replace(/@\s*\d+/g, '').trim()
