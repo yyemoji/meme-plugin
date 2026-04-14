@@ -179,13 +179,18 @@ const Common = {
        */
     let quotedImages = []
     let source = null
+    logger.info(`[getImage] 开始获取引用消息中的图片, quotedImages配置: ${Config.meme.quotedImages}`)
     if (Config.meme.quotedImages) {
       if (e.reply_id) {
+        logger.info(`[getImage] 检测到 e.reply_id: ${e.reply_id}`)
         source = await e.getReply()
       } else if (e.source) {
+        logger.info(`[getImage] 检测到 e.source: ${JSON.stringify(e.source)}`)
         if (e.isGroup && e.source.seq) {
+          logger.info(`[getImage] 群聊消息，seq: ${e.source.seq}`)
           source = await Bot[e.self_id].pickGroup(e.group_id).getChatHistory(e.source.seq, 1)
         } else if (e.isPrivate && e.source.time) {
+          logger.info(`[getImage] 私聊消息，time: ${e.source.time}`)
           source = await Bot[e.self_id].pickFriend(e.user_id).getChatHistory(e.source.time, 1)
         }
       }
@@ -193,11 +198,14 @@ const Common = {
 
     if (source) {
       const sourceArray = Array.isArray(source) ? source : [ source ]
+      logger.info(`[getImage] 获取到引用消息，数量: ${sourceArray.length}`)
 
       quotedImages = sourceArray
         .flatMap(item => item.message || [])
         .filter(msg => msg && msg.type === 'image')
         .map(img => img.url)
+      
+      logger.info(`[getImage] 从引用消息中提取到 ${quotedImages.length} 张图片`)
     }
 
     /**
@@ -211,6 +219,7 @@ const Common = {
       const sourceArray = Array.isArray(source) ? source : [ source ]
       const quotedUser = sourceArray[0].sender?.user_id
       if (quotedUser) {
+        logger.info(`[getImage] 引用消息中没有图片，获取发送者头像: ${quotedUser}`)
         const avatarBuffer = await this.getAvatar(e, quotedUser)
         if (avatarBuffer && avatarBuffer[0]) {
           quotedImages.push(avatarBuffer[0])
@@ -222,6 +231,7 @@ const Common = {
        * 引用消息中的图片任务
        */
     if (quotedImages.length > 0) {
+      logger.info(`[getImage] 添加 ${quotedImages.length} 张引用图片任务`)
       quotedImages.forEach((item) => {
         if (Buffer.isBuffer(item)) {
           tasks.push(Promise.resolve(item))
@@ -236,6 +246,7 @@ const Common = {
        */
     if (Config.meme.imagesInMessage) {
       if (imagesInMessage.length > 0) {
+        logger.info(`[getImage] 添加 ${imagesInMessage.length} 张消息图片任务`)
         tasks.push(...imagesInMessage.map((imageUrl) => this.getImageBuffer(imageUrl)))
       }
     }
@@ -244,6 +255,8 @@ const Common = {
     const images = results
       .filter((res) => res.status === 'fulfilled' && res.value)
       .map((res) => res.value)
+    
+    logger.info(`[getImage] 最终获取到 ${images.length} 张图片`)
     return images
   },
 
