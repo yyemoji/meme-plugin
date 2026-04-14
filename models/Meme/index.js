@@ -57,7 +57,7 @@ async function make (
         .map(at => at?.qq?.toString() ?? ''),
       ...[ ...userText.matchAll(/@\s*(\d+)/g) ].map(match => match[1] ?? '')
     ])
-  ].filter(id => id && id !== quotedUser)
+  ].filter(id => id)
 
   if (userText) {
     userText = userText.replace(/@\s*\d+/g, '').trim()

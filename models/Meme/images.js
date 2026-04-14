@@ -59,7 +59,7 @@ async function handleImages (e, memeKey, userText, min_images, max_images, allUs
   }
 
 
-  const finalImages = [ ...userAvatars, ...messageImages ].slice(0, max_images)
+  const finalImages = [ ...messageImages, ...userAvatars ].slice(0, max_images)
 
   finalImages.forEach((buffer, index) => {
     formData.append('images', new Blob([ buffer ], { type: 'image/png' }), `image${index}.png`)
