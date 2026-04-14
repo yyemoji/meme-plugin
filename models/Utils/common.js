@@ -183,10 +183,10 @@ const Common = {
       if (e.reply_id) {
         source = await e.getReply()
       } else if (e.source) {
-        if (e.isGroup) {
-          source = await Bot[e.self_id].pickGroup(e.group_id).getChatHistory(e.source.seq || e.reply_id, 1)
-        } else if (e.isPrivate) {
-          source = await Bot[e.self_id].pickFriend(e.user_id).getChatHistory(e.source.time || e.reply_id, 1)
+        if (e.isGroup && e.source.seq) {
+          source = await Bot[e.self_id].pickGroup(e.group_id).getChatHistory(e.source.seq, 1)
+        } else if (e.isPrivate && e.source.time) {
+          source = await Bot[e.self_id].pickFriend(e.user_id).getChatHistory(e.source.time, 1)
         }
       }
     }
@@ -195,8 +195,8 @@ const Common = {
       const sourceArray = Array.isArray(source) ? source : [ source ]
 
       quotedImages = sourceArray
-        .flatMap(item => item.message)
-        .filter(msg => msg.type === 'image')
+        .flatMap(item => item.message || [])
+        .filter(msg => msg && msg.type === 'image')
         .map(img => img.url)
     }
 
@@ -209,10 +209,12 @@ const Common = {
       source &&
       (e.source || e.reply_id)) {
       const sourceArray = Array.isArray(source) ? source : [ source ]
-      const quotedUser = sourceArray[0].sender.user_id
-      const avatarBuffer = await this.getAvatar(e, quotedUser)
-      if (avatarBuffer[0]) {
-        quotedImages.push(avatarBuffer[0])
+      const quotedUser = sourceArray[0].sender?.user_id
+      if (quotedUser) {
+        const avatarBuffer = await this.getAvatar(e, quotedUser)
+        if (avatarBuffer && avatarBuffer[0]) {
+          quotedImages.push(avatarBuffer[0])
+        }
       }
     }
 
@@ -223,7 +225,7 @@ const Common = {
       quotedImages.forEach((item) => {
         if (Buffer.isBuffer(item)) {
           tasks.push(Promise.resolve(item))
-        } else {
+        } else if (item) {
           tasks.push(this.getImageBuffer(item))
         }
       })

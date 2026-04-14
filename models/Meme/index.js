@@ -41,9 +41,9 @@ async function make (
   if (e.reply_id) {
     source = await e.getReply()
   } else if (e.source) {
-    if (e.isGroup) {
+    if (e.isGroup && e.source.seq) {
       source = await Bot[e.self_id].pickGroup(e.group_id).getChatHistory(e.source.seq, 1)
-    } else if (e.isPrivate) {
+    } else if (e.isPrivate && e.source.time) {
       source = await Bot[e.self_id].pickFriend(e.user_id).getChatHistory(e.source.time, 1)
     }
   }
@@ -53,17 +53,22 @@ async function make (
     // 检查引用消息中是否存在图片
     hasQuotedImages = sourceArray.some(item => 
       item.message && Array.isArray(item.message) && 
-      item.message.some(msg => msg.type === 'image')
+      item.message.some(msg => msg && msg.type === 'image')
     )
   }
-  const allUsers = [
-    ...new Set([
-      ...e.message
-        .filter(m => m?.type === 'at')
-        .map(at => at?.qq?.toString() ?? ''),
-      ...[ ...userText.matchAll(/@\s*(\d+)/g) ].map(match => match[1] ?? '')
-    ])
-  ].filter(id => id && (!hasQuotedImages || id !== quotedUser))
+  // 提取所有@用户
+  const atUsers = e.message
+    .filter(m => m?.type === 'at')
+    .map(at => at?.qq?.toString() ?? '')
+  // 提取文本中的@用户
+  const textUsers = [ ...userText.matchAll(/@\s*(\d+)/g) ].map(match => match[1] ?? '')
+  // 合并去重
+  const allUsersSet = new Set([...atUsers, ...textUsers])
+  // 如果引用消息中存在图片，移除引用消息的发送者
+  if (hasQuotedImages && quotedUser) {
+    allUsersSet.delete(quotedUser)
+  }
+  const allUsers = Array.from(allUsersSet).filter(id => id)
 
   if (userText) {
     userText = userText.replace(/@\s*\d+/g, '').trim()
