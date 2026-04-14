@@ -7,22 +7,22 @@ export const List = [
     list: [
       {
         icon: 161,
-        title: '#表情列表',
+        title: '#清语表情列表',
         desc: '获取表情列表'
       },
       {
         icon: 90,
-        title: '#表情搜索xx',
+        title: '#清语表情搜索xx',
         desc: '搜指定的表情'
       },
       {
         icon: 75,
-        title: '#表情详情xx',
+        title: '#清语表情详情xx',
         desc: '获取指定表情详情'
       },
       {
         icon: 72,
-        title: '#表情统计',
+        title: '#清语表情统计',
         desc: '获取表情统计'
       },
       {
@@ -38,17 +38,17 @@ export const List = [
     list: [
       {
         icon: 95,
-        title: '#表情{插件}{强制}更新',
+        title: '#清语表情{插件}{强制}更新',
         desc: '更新插件本体'
       },
       {
         icon: 81,
-        title: '#表情({强制}更新资源',
+        title: '#清语表情({强制}更新资源',
         desc: '更新表情资源'
       },
       {
         icon: 85,
-        title: '#表情设置',
+        title: '#清语表情设置',
         desc: '管理命令'
       }
     ]
